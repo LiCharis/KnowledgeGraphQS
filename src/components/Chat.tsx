@@ -12,7 +12,7 @@ import {
   SendOutlined
 } from "@ant-design/icons";
 
-const Chat = ({currentMessagesValue}) => {
+const Chat = (currentMessagesValue:any) => {
   const proChat = useProChat();
   const theme = useTheme();
   const [showComponent, setShowComponent] = useState(false)
@@ -91,7 +91,7 @@ const Chat = ({currentMessagesValue}) => {
     <div
       style={{
         backgroundColor: theme.colorBgLayout,
-        heigth:'85vh',
+        height:'85vh',
       }}
     >
       {

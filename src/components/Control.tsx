@@ -17,7 +17,6 @@ import {
   MailOutlined,
   UploadOutlined,
 } from "@ant-design/icons";
-import {NotificationPlacement} from "antd/es/notification/interface";
 import type {NotificationArgsProps} from 'antd';
 import {Typography} from 'antd';
 import moment from "moment";
@@ -26,7 +25,7 @@ const {Paragraph, Text} = Typography;
 
 type NotificationPlacement = NotificationArgsProps['placement'];
 
-const Control = ({getCurrentMessages}) => {
+const Control = (getCurrentMessages:any) => {
   const proChat = useProChat();
   const uuid = require('uuid');
 
@@ -92,7 +91,6 @@ const Control = ({getCurrentMessages}) => {
   const openNotification = (placement: NotificationPlacement, id: any) => {
     const url = `http:localhost:3000/share/${id}`;
     api.info({
-      width: 500,
       message: '分享链接',
       description:
         <Paragraph copyable>{url}</Paragraph>,
@@ -112,7 +110,7 @@ const Control = ({getCurrentMessages}) => {
               style={{width: '90%', height: 400, margin: 'auto', overflow: 'auto'}}>
           <Space direction="vertical" size="middle" style={{display: 'flex'}}>
             {
-              messages.map((item, index) => {
+              messages.map((item:any, index:any) => {
                 console.log(item.content);
                 return (<div key={index}>
                     <p><Avatar src={<img src={item.meta.avatar} alt="avatar"/>}/>{item.meta.title}</p>
@@ -148,7 +146,7 @@ const Control = ({getCurrentMessages}) => {
     });
     const res = await response.json();
     if (res.code === 0) {
-      const temp = res.data.map((item) => {
+      const temp = res.data.map((item:any) => {
         return getItem(<a onClick={() => {
           setMessages(item)
         }}>{item.messages[0].content}</a>, item.id, <Text
@@ -156,10 +154,10 @@ const Control = ({getCurrentMessages}) => {
                                                                                                ghost
                                                                                                onClick={() => {
                                                                                                  deleteMessages(item.id)
-                                                                                               }}><DeleteOutlined/>删除</Button>), '1',
+                                                                                               }}><DeleteOutlined/>删除</Button>),
           getItem(<Button type="primary" ghost onClick={() => {
             share(item)
-          }}><UploadOutlined/>分享</Button>, '2')])
+          }}><UploadOutlined/>分享</Button>)])
       })
 
 
