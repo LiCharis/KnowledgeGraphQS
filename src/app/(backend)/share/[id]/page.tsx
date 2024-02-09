@@ -72,7 +72,7 @@ export default function Page({params}: { params: { id: string } }) {
                   style={{width: '100%', height: 700}}>
               <Space direction="vertical">
                 {
-                  messages.map((item, index) => {
+                  messages.map((item:any, index) => {
                     return (
 
                       <Card style={{width: 800, marginTop: 16}}>
