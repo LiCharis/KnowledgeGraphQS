@@ -123,7 +123,7 @@ export default () => {
                     >
                       <Meta
                         avatar={<Avatar size="large"
-                                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQzJcQKbN6zGwCwD_qyiuf-X1FmbPNm9yDrdM0LADE&s"/>}
+                                        src="/user.png"/>}
                         title={<a style={{color: "white"}}>lili小萌新</a>}
                         description={<a style={{color: "white"}}>个人账号</a>}
                       />

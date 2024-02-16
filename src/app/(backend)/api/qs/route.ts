@@ -4,7 +4,7 @@ export async function POST(request: Request) {
   const message = await request.json();
   try {
     const response = await fetch(
-      'http://101.43.233.52:8001/api/qasystem/getRes',
+      'http://101.201.81.126:8000/api/qasystem/getRes',
       {
         method: 'POST',
         headers: {

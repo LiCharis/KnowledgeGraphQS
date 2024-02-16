@@ -25,7 +25,10 @@ const {Paragraph, Text} = Typography;
 
 type NotificationPlacement = NotificationArgsProps['placement'];
 
-const Control = (getCurrentMessages:any) => {
+type ChildComponentProps = {
+  getCurrentMessages: (value: any) => void; // 函数类型：接受一个any类型的参数并且不返回任何内容
+};
+const Control = ({getCurrentMessages}:ChildComponentProps) => {
   const proChat = useProChat();
   const uuid = require('uuid');
 
@@ -89,7 +92,7 @@ const Control = (getCurrentMessages:any) => {
   };
   const [api, contextHolder] = notification.useNotification();
   const openNotification = (placement: NotificationPlacement, id: any) => {
-    const url = `http:localhost:3000/share/${id}`;
+    const url = `https://knowledge-graph-qs.vercel.app/share/${id}`;
     api.info({
       message: '分享链接',
       description:
