@@ -18,7 +18,7 @@ export default function Page({params}: { params: { id: string } }) {
   /**
    * 得到所需要分享的消息
    */
-  const [messages, setMessages] = useState<any>([]);
+  const [messageBody, setMessageBody] = useState<any>([]);
 
   const getMessages = async () => {
     const response = await fetch('/api/qs/getOne', {
@@ -28,8 +28,8 @@ export default function Page({params}: { params: { id: string } }) {
       }),
     });
     const res = await response.json();
-    const messages = res.data.messages;
-    setMessages(messages);
+    const messages = res.data;
+    setMessageBody(messages);
     setShowComponent(true);
   }
 
@@ -67,12 +67,12 @@ export default function Page({params}: { params: { id: string } }) {
       {showComponent ?
         (<Layout style={layoutStyle}>
           <Content style={contentStyle}>
-            <Card title={<div style={{marginBottom: 25}}><h1>{messages[0]?.content}</h1> <Text
-              code>{moment(messages[0]?.createAt).format('YYYY-MM-DD')}</Text></div>} bordered={false}
+            <Card title={<div style={{marginBottom: 25}}><h1>{messageBody.title}</h1> <Text
+              code>{moment(messageBody.messages[0]?.createAt).format('YYYY-MM-DD')}</Text></div>} bordered={false}
                   style={{width: '100%', height: 700}}>
               <Space direction="vertical">
                 {
-                  messages.map((item:any, index:any) => {
+                  messageBody.messages.map((item:any, index:any) => {
                     return (
 
                       <Card style={{width: 800, marginTop: 16}}>

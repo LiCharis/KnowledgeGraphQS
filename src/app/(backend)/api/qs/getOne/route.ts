@@ -4,7 +4,7 @@ export async function POST(request: Request) {
   const message = await request.json();
   try {
     const response = await fetch(
-      'http://101.43.233.52:8130/api/chat/getOne',
+      'http://127.0.0.1:8130/api/chat/getOne',
       {
         method: 'POST',
         headers: {

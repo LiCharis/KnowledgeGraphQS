@@ -12,10 +12,14 @@ import {
     SendOutlined
 } from "@ant-design/icons";
 
-const Chat = (currentMessagesValue: any) => {
+type ChildComponentProps = {
+    currentMessagesValue: any;
+    handleNewChatChange: (value: any) => void; // 函数类型：接受一个any类型的参数并且不返回任何内容
+};
+const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessagesValue}) => {
 
     const [historyMessages, setHistoryMessages] = useState(currentMessagesValue || null);
-
+    console.log("eeeee",typeof handleNewChatChange);
     /**
      * 父组件传递过来的当前选中消息
      */
@@ -143,7 +147,7 @@ const Chat = (currentMessagesValue: any) => {
                     }}
                     request={async (messages) => {
                         console.log("request", messages);
-                        if (messages.length <= historyMessages.currentMessagesValue.length) {
+                        if (messages.length <= historyMessages?.currentMessagesValue?.length) {
                             return new Response(historyMessages.currentMessagesValue[2 * messages.length - 1]?.content);
                         }
                         const response = await fetch('/api/qs', {
@@ -155,7 +159,13 @@ const Chat = (currentMessagesValue: any) => {
                         //保存消息
                         const currentMessages = proChat.getChatMessages();
                         currentMessages[currentMessages.length - 1].content = data.data;
-                        addMessages(currentMessages);
+                        await addMessages(currentMessages);
+
+                        //如果最新对话就获取历史消息显示在列表上
+                        if(messages.length === 1){
+                            const bool = [true];
+                            handleNewChatChange(bool);
+                        }
                         return new Response(data.data);
                         // const text = await delay(
                         //   `好的，这里有一个简单的笑话。有一次，一只番茄和一只土豆进行赛跑。番茄一直落后，土豆回头看了看，对番茄说:“加油啊，番茄酱”`,

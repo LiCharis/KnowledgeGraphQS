@@ -19,6 +19,16 @@ import {flexbox} from "@mui/system";
 
 
 export default () => {
+
+  /**
+   * 新聊天的标志
+   */
+  const [isNewChat, setIsNewChat] = useState([false]);
+  const handleNewChatChange = (newData:any) => {
+    setIsNewChat(newData);
+  };
+
+
   const [showComponent, setShowComponent] = useState(false);
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -67,7 +77,6 @@ export default () => {
   };
 
   const siderStyle: React.CSSProperties = {
-    textAlign: 'center',
     lineHeight: '120px',
     color: '#fff',
     backgroundColor: "black",
@@ -94,7 +103,7 @@ export default () => {
           <Layout >
             <ProChatProvider>
               <Sider width="20%" style={siderStyle}>
-                <Control getCurrentMessages={getCurrentMessages}/>
+                <Control getCurrentMessages={getCurrentMessages} isNewChat={isNewChat}/>
 
               </Sider>
               <Layout>
@@ -114,7 +123,7 @@ export default () => {
 
                 <Content >
 
-                  <Chat currentMessagesValue={currentMessages}/>
+                  <Chat currentMessagesValue={currentMessages} handleNewChatChange={handleNewChatChange}/>
 
                 </Content>
                 <div style={{display:'flex',flex:1,}}>
