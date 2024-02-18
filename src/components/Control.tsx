@@ -33,9 +33,6 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
     const proChat = useProChat();
     const uuid = require('uuid');
 
-    console.log("isnewChat",isNewChat);
-
-
     type MenuItem = Required<MenuProps>['items'][number];
 
     function getItem(
@@ -52,7 +49,6 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
             label,
             type,
             icon,
-            theme,
         } as MenuItem;
     }
 
@@ -60,9 +56,23 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
     /**
      * 历史消息数组
      */
-    const [theme, setTheme] = useState<>('light');
     const [messageList, setMessageList] = useState<MenuItem[]>();
     const [items, setItems] = useState<MenuItem[]>();
+
+    /**
+     * 点击菜单，收起其他展开的所有菜单，保持菜单聚焦简洁。
+     */
+    const [rootSubmenuKeys,setRootSubmenuKeys] = useState([]);
+    const [openKeys, setOpenKeys] = useState([rootSubmenuKeys[0]]);
+
+    const onOpenChange: MenuProps['onOpenChange'] = (keys) => {
+        const latestOpenKey = keys.find((key) => openKeys.indexOf(key) === -1);
+        if (latestOpenKey && rootSubmenuKeys.indexOf(latestOpenKey!) === -1) {
+            setOpenKeys(keys);
+        } else {
+            setOpenKeys(latestOpenKey ? [latestOpenKey] : []);
+        }
+    };
     // const items: MenuItem[] =
     //     [
     //
@@ -83,7 +93,6 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
      * messageList变化后就渲染历史界面
      */
     useEffect(() => {
-        console.log(messageList)
         const temp: MenuItem[] = [
             getItem(<a type="text" onClick={() => {
                 proChat.clearMessage();
@@ -91,17 +100,21 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
             }}>
                 新聊天
                 <FormOutlined/>
-            </a>, 'new', <Avatar src={<img src={'/logo.svg'} alt="avatar"/>}/>)]
+            </a>, 'new', <Avatar src={<img src={'/logo.svg'} alt="avatar"/>}/>),
+            getItem(<Divider type="vertical" />)
+        ]
+        const rootSubmenuKeysTemp = [];
         for (let i = 0; i < messageList?.length; i++) {
             if (messageList) {
+                rootSubmenuKeysTemp.push(messageList[i].key);
                 temp.push(messageList[i]);
             }
         }
+       setRootSubmenuKeys(rootSubmenuKeysTemp);
         setItems(temp);
     }, [messageList]);
 
 
-    const [current, setCurrent] = useState('1');
     const onClick: MenuProps['onClick'] = async (e) => {
         if (e.key === 'new' || e.key === 'history') return;
         console.log('click ', e.key);
@@ -220,7 +233,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
         });
         const res = await response.json();
         if (res.code === 0) {
-            const temp = res.data.map((item: any) => {
+            const temp = res.data.map((item: any,index:number) => {
                 return getItem(<a onClick={() => {
                     setMessages(item)
                 }}>{item?.title} </a>, item.id, <Text
@@ -229,15 +242,15 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
                     getItem(<Button
                         onClick={() => {
                             updateTitle(item)
-                        }}><EditOutlined/>改名</Button>),
+                        }}><EditOutlined/>改名</Button>,"change" + item.id),
                     getItem(<Button type="primary"
                                     danger
                                     onClick={() => {
                                         deleteMessages(item.id)
-                                    }}><DeleteOutlined/>删除</Button>),
+                                    }}><DeleteOutlined/>删除</Button>,"delete" + item.id),
                     getItem(<Button type="primary" onClick={() => {
                         share(item)
-                    }}><UploadOutlined/>分享</Button>)], theme)
+                    }}><UploadOutlined/>分享</Button>,"share" + item.id)])
             })
 
             setMessageList(temp);
@@ -392,9 +405,11 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
                 theme="dark"
                 onClick={onClick}
                 style={{width: '100%', minWidth: 0, flex: "auto"}}
-                selectedKeys={[current]}
-                mode="vertical"
+                openKeys={openKeys}
+                onOpenChange={onOpenChange}
+                mode="inline"
                 items={items}
+                selectable={false}
             />
 
         </div>

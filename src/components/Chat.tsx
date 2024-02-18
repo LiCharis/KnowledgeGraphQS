@@ -19,7 +19,7 @@ type ChildComponentProps = {
 const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessagesValue}) => {
 
     const [historyMessages, setHistoryMessages] = useState(currentMessagesValue || null);
-    console.log("eeeee",typeof handleNewChatChange);
+
     /**
      * 父组件传递过来的当前选中消息
      */
