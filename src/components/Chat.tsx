@@ -5,7 +5,7 @@ import {useTheme} from 'antd-style';
 import {
     Button,
     Collapse,
-    CollapseProps,
+    CollapseProps, message,
 } from "antd";
 import {
     PauseCircleOutlined,
@@ -132,7 +132,14 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                                 <Button
                                     type={"default"}
                                     onClick={() => {
-                                        proChat.stopGenerateMessage();
+                                        const messages = proChat.getChatMessages();
+                                        const { id, content } = messages.at(-1) || {};
+                                        if (!messages.length) {
+                                            message.warning('会话为空');
+                                        } else {
+                                            if (!id) return;
+                                            proChat.setMessageContent(id, "停止生成...");
+                                        }
                                     }}
                                     style={{
                                         alignSelf: 'flex-end',
@@ -146,9 +153,10 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                         },
                     }}
                     request={async (messages) => {
-                        console.log("request", messages);
-                        if (messages.length <= historyMessages?.currentMessagesValue?.length) {
-                            return new Response(historyMessages.currentMessagesValue[2 * messages.length - 1]?.content);
+                        console.log("request.length", messages.length);
+                        console.log("historyMessages.length",historyMessages?.length)
+                        if (messages.length <= historyMessages?.length) {
+                            return new Response(historyMessages[2 * messages.length - 1]?.content);
                         }
                         const response = await fetch('/api/qs', {
                             method: 'POST',

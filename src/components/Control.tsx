@@ -32,6 +32,7 @@ type ChildComponentProps = {
 const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) => {
     const proChat = useProChat();
     const uuid = require('uuid');
+    console.log("ffff",isNewChat);
 
     type MenuItem = Required<MenuProps>['items'][number];
 
@@ -96,6 +97,8 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages,isNewChat}) 
         const temp: MenuItem[] = [
             getItem(<a type="text" onClick={() => {
                 proChat.clearMessage();
+                //消除之前存留的传递给Chat组件的历史消息，防止发不出新消息
+                getCurrentMessages([])
                 localStorage.setItem('id', uuid.v4());
             }}>
                 新聊天
