@@ -163,7 +163,13 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                             //只传递最新一个问题，因为现在还无法做到连续对话
                             body: JSON.stringify({messages: messages[messages.length - 1]}),
                         });
-                        const data = await response.json();
+                        let data = undefined;
+                        try {
+                            data = await response.json();
+                        }catch (error:any){
+                            data = {data:"请求超时，服务器错误...😥"}
+                        }
+
                         //保存消息
                         const currentMessages = proChat.getChatMessages();
                         currentMessages[currentMessages.length - 1].content = data.data;

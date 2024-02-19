@@ -7,7 +7,7 @@ import {
   Flex,
   Layout,
   Select,
-  Card, Spin, Space
+  Card, Spin, Space, Button
 } from "antd";
 import {Content, Footer, Header} from "antd/es/layout/layout";
 import Sider from "antd/es/layout/Sider";
@@ -16,6 +16,7 @@ import Control from "@/components/Control";
 import Chat from "@/components/Chat";
 import Loading from "@/app/loading";
 import {flexbox} from "@mui/system";
+import {MenuFoldOutlined, MenuUnfoldOutlined} from "@ant-design/icons";
 
 
 export default () => {
@@ -91,6 +92,13 @@ export default () => {
     height:'100%',
   };
 
+  const [collapsed, setCollapsed] = useState(false);
+  const [siderWidth, setSiderWidth] = useState('20%'); // 初始侧边栏宽度
+  const onSiderCollapse = () => {
+    setCollapsed(!collapsed);
+    setSiderWidth(!collapsed ? '56px' : '20%'); // 根据Sider的折叠状态设置宽度
+    console.log("siderWidth",siderWidth);
+  };
   return (<div style={{
       height: '100vh',
       width: '100vw',
@@ -100,9 +108,20 @@ export default () => {
     }}>
       {showComponent ?
         (
-          <Layout >
+          <Layout>
             <ProChatProvider>
-              <Sider width="20%" style={siderStyle}>
+              <Sider width="20%" collapsedWidth={56} collapsed={collapsed}>
+                <Button
+                    ghost
+                    icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                    onClick={onSiderCollapse}
+                    style={{
+                      fontSize: '16px',
+                      width: 32,
+                      height: 32,
+                      left:12
+                    }}
+                />
                 <Control getCurrentMessages={getCurrentMessages} isNewChat={isNewChat}/>
 
               </Sider>
@@ -127,7 +146,7 @@ export default () => {
 
                 </Content>
                 <div style={{display:'flex',flex:1,}}>
-                  <div style={{backgroundColor: 'black', position: 'absolute', bottom: 0, left: 0,width:'20%'}}>
+                  <div style={{backgroundColor: 'black', position: 'absolute', bottom: 0, left: 0,width:siderWidth}}>
                     <Card size={'small'} bordered={false} style={{backgroundColor: 'transparent'}}
                     >
                       <Meta
