@@ -78,8 +78,6 @@ export default () => {
   };
 
   const siderStyle: React.CSSProperties = {
-    lineHeight: '120px',
-    color: '#fff',
     backgroundColor: "black",
   };
 
@@ -110,7 +108,7 @@ export default () => {
         (
           <Layout>
             <ProChatProvider>
-              <Sider width="20%" collapsedWidth={56} collapsed={collapsed}>
+              <Sider width="20%" collapsedWidth={56} collapsed={collapsed} style={siderStyle}>
                 <Button
                     ghost
                     icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -158,7 +156,7 @@ export default () => {
                     </Card>
                   </div>
                   <Footer style={{textAlign: 'center',flex:1, }}>
-                    KnowledgeGraph QS ©{new Date().getFullYear()} Created by Li
+                    MultiRoundConversationChat ©{new Date().getFullYear()} Created by Li
                   </Footer>
                 </div>
 

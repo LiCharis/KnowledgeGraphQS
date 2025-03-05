@@ -5,7 +5,7 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'KnowledgeGraph医学助手',
+  title: 'MultiRoundConversationChat',
   description: 'Created by Li',
 };
 

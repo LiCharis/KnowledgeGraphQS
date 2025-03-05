@@ -26,6 +26,7 @@ export default function Page({params}: { params: { id: string } }) {
       body: JSON.stringify({
         id: id,
       }),
+      credentials: 'include', // 添加此行
     });
     const res = await response.json();
     const messages = res.data;
@@ -98,7 +99,7 @@ export default function Page({params}: { params: { id: string } }) {
               backgroundColor: '#4096ff',
             }}
           >
-            KnowledgeGraph QS ©{new Date().getFullYear()} Created by Li
+            MultiRoundConversationChat ©{new Date().getFullYear()} Created by Li
           </Header>
         </Layout>) :(<Loading/>)
       }

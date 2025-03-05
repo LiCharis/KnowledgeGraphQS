@@ -11,6 +11,8 @@ import {
     PauseCircleOutlined,
     SendOutlined
 } from "@ant-design/icons";
+import {OpenAIStream, StreamingTextResponse} from "ai";
+import {MockResponse} from "@ant-design/pro-chat/es/ProChat/mocks/streamResponse";
 
 type ChildComponentProps = {
     currentMessagesValue: any;
@@ -55,6 +57,7 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                 userId: 1,
                 messages: messages
             }),
+            credentials: 'include', // 添加此行
         });
         const res = await response.json();
     }
@@ -124,7 +127,7 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                     }}
                     assistantMeta={{
                         avatar: '/doctor.png',
-                        title: 'KnowledgeGraph',
+                        title: 'MultiRoundConversationChat',
                     }}
                     backtoBottomConfig={{
                         render: (_, scrollToBottom) => {
@@ -161,8 +164,10 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                         const response = await fetch('/api/qs', {
                             method: 'POST',
                             //只传递最新一个问题，因为现在还无法做到连续对话
-                            body: JSON.stringify({messages: messages[messages.length - 1]}),
+                            body: JSON.stringify(messages[messages.length - 1]),
                         });
+
+
                         let data = undefined;
                         try {
                             data = await response.json();
@@ -180,6 +185,9 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                             const bool = [true];
                             handleNewChatChange(bool);
                         }
+                        // const mockResponse = new MockResponse(data.data, 10);
+                        //
+                        // return mockResponse.getResponse();
                         return new Response(data.data);
                         // const text = await delay(
                         //   `好的，这里有一个简单的笑话。有一次，一只番茄和一只土豆进行赛跑。番茄一直落后，土豆回头看了看，对番茄说:“加油啊，番茄酱”`,

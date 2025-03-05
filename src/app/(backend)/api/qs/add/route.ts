@@ -11,6 +11,7 @@ export async function POST(request: Request) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(message),
+          credentials: 'include', // 添加此行
       },
     );
     const data = await response.json();

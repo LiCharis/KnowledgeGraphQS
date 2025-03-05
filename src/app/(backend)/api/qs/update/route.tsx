@@ -10,6 +10,7 @@ export async function POST(request: Request) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include', // 添加此行
                 body: JSON.stringify(message),
             },
         );

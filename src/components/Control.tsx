@@ -20,6 +20,7 @@ import {
 import type {NotificationArgsProps} from 'antd';
 import {Typography} from 'antd';
 import moment from "moment";
+import {black} from "kleur/colors";
 
 const {Paragraph, Text} = Typography;
 
@@ -238,6 +239,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
             body: JSON.stringify({
                 userId: 1,
             }),
+            credentials: 'include', // 添加此行
         });
         const res = await response.json();
         if (res.code === 0) {
@@ -291,6 +293,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
             body: JSON.stringify({
                 id: id,
             }),
+            credentials: 'include', // 添加此行
         });
         const res = await response.json();
         const messages = res.data;
@@ -325,6 +328,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
             body: JSON.stringify({
                 id: id,
             }),
+            credentials: 'include', // 添加此行
         });
         const res = await response.json();
         if (res.code === 0) {
@@ -349,6 +353,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
                 id: values.id,
                 title: values.title
             }),
+            credentials: 'include', // 添加此行
         });
         const res = await response.json();
         if (res.code === 0) {
@@ -363,11 +368,12 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
     /**
      * 重新回到历史消息
      */
-    const setMessages = async (MessageBody: any) => {
+    const setMessages = (MessageBody: any) => {
         const id = MessageBody.id;
-        const selectMessageBody: any = await getOne(id);
+        //选中该历史消息，将消息放入session中
+        getOne(id)
+        const selectMessage: any = MessageBody.messages;
         //传递给父组件
-        const selectMessage = selectMessageBody.messages;
         getCurrentMessages(selectMessage);
         console.log("currentId", id);
         localStorage.setItem("id", id);
@@ -414,7 +420,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
             <Menu
                 theme="dark"
                 onClick={onClick}
-                style={{width: '100%', minWidth: 0, flex: "auto"}}
+                style={{width: '100%', minWidth: 0, flex: "auto", backgroundColor: "transparent"}}
                 openKeys={openKeys}
                 onOpenChange={onOpenChange}
                 mode="inline"
