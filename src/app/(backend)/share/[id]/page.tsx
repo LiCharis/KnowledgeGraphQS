@@ -21,7 +21,7 @@ export default function Page({params}: { params: { id: string } }) {
   const [messageBody, setMessageBody] = useState<any>([]);
 
   const getMessages = async () => {
-    const response = await fetch('/api/qs/getOne', {
+    const response = await fetch('/api/chat/getOne', {
       method: 'POST',
       body: JSON.stringify({
         id: id,

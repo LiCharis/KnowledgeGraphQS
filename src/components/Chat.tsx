@@ -16,9 +16,10 @@ import {MockResponse} from "@ant-design/pro-chat/es/ProChat/mocks/streamResponse
 
 type ChildComponentProps = {
     currentMessagesValue: any;
+    currentChatId: any;
     handleNewChatChange: (value: any) => void; // 函数类型：接受一个any类型的参数并且不返回任何内容
 };
-const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessagesValue}) => {
+const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentChatId,currentMessagesValue}) => {
 
     const [historyMessages, setHistoryMessages] = useState(currentMessagesValue || null);
 
@@ -43,19 +44,14 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
     /**
      * 添加（保存）历史消息
      */
-    const uuid = require('uuid');
-    const addMessages = async (messages: any) => {
-        let id = localStorage.getItem("id");
+    const addMessages = async (message: any) => {
 
-        if (id === null) {
-            id = uuid.v4();
-        }
-        const response = await fetch('/api/qs/add', {
+        const response = await fetch('/api/chat/add', {
             method: 'POST',
             body: JSON.stringify({
-                id: id,
+                id: currentChatId,
                 userId: 1,
-                messages: messages
+                messages: message
             }),
             credentials: 'include', // 添加此行
         });
@@ -161,7 +157,7 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                         if (messages.length <= historyMessages?.length) {
                             return new Response(historyMessages[2 * messages.length - 1]?.content);
                         }
-                        const response = await fetch('/api/qs', {
+                        const response = await fetch('/api/chat', {
                             method: 'POST',
                             //只传递最新一个问题，因为现在还无法做到连续对话
                             body: JSON.stringify(messages[messages.length - 1]),
@@ -178,7 +174,14 @@ const Chat: React.FC<ChildComponentProps> = ({handleNewChatChange,currentMessage
                         //保存消息
                         const currentMessages = proChat.getChatMessages();
                         currentMessages[currentMessages.length - 1].content = data.data;
-                        await addMessages(currentMessages);
+                        // 添加长度检查
+                        if (currentMessages.length >= 2) {
+                            const lastTwoMessages = currentMessages.slice(-2);
+                            await addMessages(lastTwoMessages);
+                        } else {
+                            // 如果消息少于2条，传递所有可用消息
+                            await addMessages(currentMessages);
+                        }
 
                         //如果最新对话就获取历史消息显示在列表上
                         if(messages.length === 1){

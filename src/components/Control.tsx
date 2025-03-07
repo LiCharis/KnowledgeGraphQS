@@ -1,26 +1,25 @@
 'use client';
 import {useEffect, useState} from 'react'
 import {useProChat} from '@ant-design/pro-chat';
+import type {NotificationArgsProps} from 'antd';
 import {
     Avatar,
     Button,
+    Card,
     Divider,
+    Form,
+    Input,
     Menu,
     MenuProps,
     message,
+    Modal,
+    notification,
     Space,
-    Modal, Card, notification,Input, Form,
+    Typography,
 } from "antd";
-import {
-    DeleteOutlined, EditOutlined,
-    FormOutlined,
-    MailOutlined,
-    UploadOutlined,
-} from "@ant-design/icons";
-import type {NotificationArgsProps} from 'antd';
-import {Typography} from 'antd';
+import {DeleteOutlined, EditOutlined, FormOutlined, MailOutlined, UploadOutlined,} from "@ant-design/icons";
 import moment from "moment";
-import {black} from "kleur/colors";
+import {v4 as uuidv4} from 'uuid';
 
 const {Paragraph, Text} = Typography;
 
@@ -29,11 +28,22 @@ type NotificationPlacement = NotificationArgsProps['placement'];
 type ChildComponentProps = {
     isNewChat: any;
     getCurrentMessages: (value: any) => void; // 函数类型：接受一个any类型的参数并且不返回任何内容
+    getChatId: (value: any) => void;
 };
-const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat}) => {
+const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, getChatId, isNewChat}) => {
     const proChat = useProChat();
-    const uuid = require('uuid');
     console.log("ffff", isNewChat);
+
+    // 使用 state 来管理当前会话的 ID
+    const [currentChatId, setCurrentChatId] = useState<string>('');
+
+    // 组件加载时初始化会话 ID
+    useEffect(() => {
+        const newId = uuidv4();
+        setCurrentChatId(newId);
+        getChatId(newId);
+    }, []);
+
 
     type MenuItem = Required<MenuProps>['items'][number];
 
@@ -91,23 +101,32 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
     //     // getItem('历史消息', 'history', <MailOutlined/>, messageList),
     //
     // ];
+
+
+    // 创建新会话的函数
+    const createNewChat = async () => {
+        await clearHistory();
+        const newId = uuidv4();
+        setCurrentChatId(newId);
+        proChat.clearMessage();
+        //消除之前存留的传递给Chat组件的历史消息，防止发不出新消息
+        getCurrentMessages([]);
+        getChatId(newId);
+    };
+
+
     /**
      * messageList变化后就渲染历史界面
      */
     useEffect(() => {
         const temp: MenuItem[] = [
-            getItem(<a type="text" onClick={() => {
-                proChat.clearMessage();
-                //消除之前存留的传递给Chat组件的历史消息，防止发不出新消息
-                getCurrentMessages([])
-                localStorage.setItem('id', uuid.v4());
-            }}>
+            getItem(<a type="text" onClick={createNewChat}>
                 新聊天
                 <FormOutlined/>
             </a>, 'new', <Avatar src={<img src={'/logo.svg'} alt="avatar"/>}/>),
             getItem(<Divider type="vertical"/>)
         ]
-        const rootSubmenuKeysTemp:string[] = [];
+        const rootSubmenuKeysTemp: string[] = [];
         for (let i = 0; i < messageList?.length; i++) {
             if (messageList) {
                 const key = messageList[i]?.key;
@@ -117,7 +136,6 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
                 temp.push(messageList[i]);
             }
         }
-
 
         setRootSubmenuKeys(rootSubmenuKeysTemp);
         setItems(temp);
@@ -131,7 +149,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
 
     const [api, contextHolder] = notification.useNotification();
     const openNotification = (placement: NotificationPlacement, id: any) => {
-        const url = `https://knowledge-graph-qs.vercel.app/share/${id}`;
+        const url = `http://127.0.0.1:3000/share/${id}`;
         api.info({
             message: '分享链接',
             description:
@@ -234,7 +252,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
      * 得到历史消息
      */
     const getMessages = async () => {
-        const response = await fetch('/api/qs/getHistoryList', {
+        const response = await fetch('/api/chat/getHistoryList', {
             method: 'POST',
             body: JSON.stringify({
                 userId: 1,
@@ -269,14 +287,6 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
         }
     }
 
-
-    useEffect(() => {
-        //删除上次聊天的id
-        localStorage.removeItem("id");
-        getMessages();
-
-    }, []);
-
     /**
      * 新对话就获取列表
      */
@@ -288,7 +298,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
      * 获取当前选中的历史数据
      */
     const getOne = async (id: any) => {
-        const response = await fetch('/api/qs/getOne', {
+        const response = await fetch('/api/chat/getOne', {
             method: 'POST',
             body: JSON.stringify({
                 id: id,
@@ -298,6 +308,14 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
         const res = await response.json();
         const messages = res.data;
         return messages;
+    }
+
+
+    const clearHistory = async () => {
+       await fetch('/api/chat/clearHistory',{
+           method: 'POST',
+           body: JSON.stringify({})
+       });
     }
 
 
@@ -323,7 +341,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
      * 删除数据
      */
     const deleteMessages = async (id: any) => {
-        const response = await fetch('/api/qs/delete', {
+        const response = await fetch('/api/chat/delete', {
             method: 'POST',
             body: JSON.stringify({
                 id: id,
@@ -335,7 +353,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
             proChat.clearMessage();
             //消除之前存留的传递给Chat组件的历史消息，防止发不出新消息
             getCurrentMessages([]);
-            localStorage.removeItem("id");
+            getChatId(uuidv4());
             message.success("删除成功!")
             getMessages();
         } else {
@@ -347,7 +365,7 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
      * 修改数据
      */
     const updateMessages = async (values: any) => {
-        const response = await fetch('/api/qs/update', {
+        const response = await fetch('/api/chat/update', {
             method: 'POST',
             body: JSON.stringify({
                 id: values.id,
@@ -370,13 +388,15 @@ const Control: React.FC<ChildComponentProps> = ({getCurrentMessages, isNewChat})
      */
     const setMessages = (MessageBody: any) => {
         const id = MessageBody.id;
+        setCurrentChatId(id);
         //选中该历史消息，将消息放入session中
         getOne(id)
         const selectMessage: any = MessageBody.messages;
         //传递给父组件
         getCurrentMessages(selectMessage);
+        getChatId(id);
+
         console.log("currentId", id);
-        localStorage.setItem("id", id);
         proChat.clearMessage();
         for (let i = 0; i < selectMessage.length; i += 2) {
             proChat.sendMessage(selectMessage[i].content);

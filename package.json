@@ -1,5 +1,5 @@
 {
-  "name": "KnowledgeGraphQS",
+  "name": "MultiRoundConversationChat",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -25,6 +25,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/uuid": "^10.0.0",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
     "typescript": "^5"

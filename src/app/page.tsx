@@ -44,9 +44,15 @@ export default () => {
   }, []);
 
   const [currentMessages, setCurrentMessages] = useState([]);
+  // 使用 state 来管理当前会话的 ID
+  const [currentChatId, setCurrentChatId] = useState<string>('');
 
   const getCurrentMessages = (value: any) => {
     setCurrentMessages(value);
+  }
+
+  const getChatId = (value: any) => {
+    setCurrentChatId(value);
   }
 
 
@@ -120,7 +126,7 @@ export default () => {
                       left:12
                     }}
                 />
-                <Control getCurrentMessages={getCurrentMessages} isNewChat={isNewChat}/>
+                <Control getCurrentMessages={getCurrentMessages} getChatId={getChatId} isNewChat={isNewChat}/>
 
               </Sider>
               <Layout>
@@ -140,7 +146,7 @@ export default () => {
 
                 <Content >
 
-                  <Chat currentMessagesValue={currentMessages} handleNewChatChange={handleNewChatChange}/>
+                  <Chat currentMessagesValue={currentMessages} currentChatId={currentChatId} handleNewChatChange={handleNewChatChange}/>
 
                 </Content>
                 <div style={{display:'flex',flex:1,}}>
