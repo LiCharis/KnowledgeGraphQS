@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useCallback } from 'react';
-import { Layout, Typography, Card, Divider, Tabs, Spin, message } from 'antd';
+import { Layout, Typography, Card, Divider, Tabs, Spin, message, Space } from 'antd';
 import { FundOutlined, LineChartOutlined, FireOutlined, NodeIndexOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/navigation';
 import ChatHeatmap from '@/components/ChatHeatmap';
@@ -47,11 +47,26 @@ interface DialogueRecord {
   };
 }
 
+interface Config {
+  timeWeight: number;
+  frequencyWeight: number;
+  semanticWeight: number;
+  similarityWeight: number;
+  timeFactorWeight: number;
+}
+
 export default function HeatmapPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [dialogueHistory, setDialogueHistory] = useState<DialogueRecord[]>([]);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const [config, setConfig] = useState<Config>({
+    timeWeight: 0.33,
+    frequencyWeight: 0.33,
+    semanticWeight: 0.34,
+    similarityWeight: 0.7,
+    timeFactorWeight: 0.3,
+  });
 
   // 检查登录状态
   const checkLoginStatus = useCallback(async () => {
@@ -100,6 +115,33 @@ export default function HeatmapPage() {
       setHistoryLoading(false);
     }
   }, []);
+
+  // 处理配置变化
+  const handleConfigChange = async (newConfig: Config) => {
+    try {
+      setIsLoading(true);
+      // 调用后端 API 更新配置并获取新的历史记录
+      const response = await fetch('http://localhost:8130/api/chat/changePreference', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          userId: 1,
+          ...newConfig
+      }),
+      });
+      
+      if (!response.ok) throw new Error('Failed to update config');
+      setConfig(newConfig); 
+    } catch (error) {
+      console.error('Error updating config:', error);
+      message.error('更新配置失败');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -172,7 +214,11 @@ export default function HeatmapPage() {
               tab={<span><FireOutlined /> 对话热图</span>}
               key="1"
             >
-              <ChatHeatmap history={dialogueHistory} loading={historyLoading} />
+              <ChatHeatmap 
+                history={dialogueHistory} 
+                loading={historyLoading} 
+                onConfigChange={handleConfigChange}
+              />
             </TabPane>
             <TabPane 
               tab={<span><LineChartOutlined /> 权重趋势</span>}
@@ -184,7 +230,10 @@ export default function HeatmapPage() {
               tab={<span><NodeIndexOutlined /> 语义网络</span>}
               key="3"
             >
-              <SemanticNetwork history={dialogueHistory} loading={historyLoading} />
+              <SemanticNetwork 
+                history={dialogueHistory} 
+                loading={historyLoading} 
+              />
             </TabPane>
           </Tabs>
         </Card>

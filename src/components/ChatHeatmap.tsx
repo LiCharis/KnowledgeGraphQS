@@ -1,6 +1,6 @@
 'use client';
-import React from 'react';
-import { Skeleton, Card, Tooltip, Typography, Badge, Space, Tag, Empty } from 'antd';
+import React, { useState, useCallback } from 'react';
+import { Skeleton, Card, Tooltip, Typography, Badge, Space, Tag, Empty, Slider } from 'antd';
 import { InfoCircleOutlined } from '@ant-design/icons';
 import { useTheme } from 'antd-style';
 
@@ -22,19 +22,40 @@ interface DialogueRecord {
   };
 }
 
+interface Config {
+  timeWeight: number;
+  frequencyWeight: number;
+  semanticWeight: number;
+  similarityWeight: number;
+  timeFactorWeight: number;
+}
+
 interface ChatHeatmapProps {
   history: DialogueRecord[];
   loading: boolean;
+  onConfigChange?: (config: Config) => void;
 }
 
-const ChatHeatmap: React.FC<ChatHeatmapProps> = ({ history, loading }) => {
+const ChatHeatmap: React.FC<ChatHeatmapProps> = ({ history, loading, onConfigChange }) => {
   const theme = useTheme();
+  const [config, setConfig] = useState<Config>({
+    timeWeight: 0.33,
+    frequencyWeight: 0.33,
+    semanticWeight: 0.34,
+    similarityWeight: 0.7,
+    timeFactorWeight: 0.3,
+  });
+
+  // 更新配置并通知父组件
+  const updateConfig = useCallback((newConfig: Partial<Config>) => {
+    const updatedConfig = { ...config, ...newConfig };
+    setConfig(updatedConfig);
+    onConfigChange?.(updatedConfig);
+  }, [config, onConfigChange]);
 
   // 计算颜色强度
   const getHeatColor = (weight: number) => {
-    // 限制权重范围在0-1之间
     const normalizedWeight = Math.min(Math.max(weight, 0), 1);
-    // 权重越高，颜色越深
     return `rgba(124, 77, 255, ${normalizedWeight})`;
   };
 
@@ -43,6 +64,135 @@ const ChatHeatmap: React.FC<ChatHeatmapProps> = ({ history, loading }) => {
     const colors = ['#7C4DFF', '#4386FF', '#00BCD4', '#009688', '#8BC34A', '#CDDC39'];
     return colors[index % colors.length];
   };
+
+  // 添加权重调节控制器
+  const WeightAdjuster = () => (
+    <Card
+      size="small"
+      title={
+        <Space>
+          <Text strong>综合权重配置</Text>
+          <Tooltip title="调整对话重要性评分的各个维度权重，这些权重将影响热图的颜色深浅">
+            <InfoCircleOutlined style={{ color: theme.colorPrimary }} />
+          </Tooltip>
+        </Space>
+      }
+      style={{ marginBottom: 16 }}
+    >
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <div>
+          <Text>时间权重: {(config.timeWeight * 100).toFixed(0)}%</Text>
+          <Tooltip title="时间权重影响对话的时效性评分，最近的对话会获得更高的权重">
+            <Slider
+              value={config.timeWeight}
+              min={0}
+              max={1}
+              step={0.01}
+              onChange={(value) => {
+                const remaining = (1 - value) / 2;
+                updateConfig({
+                  timeWeight: value,
+                  frequencyWeight: remaining,
+                  semanticWeight: remaining,
+                });
+              }}
+            />
+          </Tooltip>
+        </div>
+        <div>
+          <Text>频率权重: {(config.frequencyWeight * 100).toFixed(0)}%</Text>
+          <Tooltip title="频率权重反映关键词在对话中出现的频次，高频词会获得更高的权重">
+            <Slider
+              value={config.frequencyWeight}
+              min={0}
+              max={1}
+              step={0.01}
+              onChange={(value) => {
+                const remaining = (1 - value) / 2;
+                updateConfig({
+                  timeWeight: remaining,
+                  frequencyWeight: value,
+                  semanticWeight: remaining,
+                });
+              }}
+            />
+          </Tooltip>
+        </div>
+        <div>
+          <Text>相关度权重: {(config.semanticWeight * 100).toFixed(0)}%</Text>
+          <Tooltip title="相关度权重表示对话内容与当前上下文的语义相关程度">
+            <Slider
+              value={config.semanticWeight}
+              min={0}
+              max={1}
+              step={0.01}
+              onChange={(value) => {
+                const remaining = (1 - value) / 2;
+                updateConfig({
+                  timeWeight: remaining,
+                  frequencyWeight: remaining,
+                  semanticWeight: value,
+                });
+              }}
+            />
+          </Tooltip>
+        </div>
+      </Space>
+    </Card>
+  );
+
+  // 添加语义配置调节控制器
+  const SemanticAdjuster = () => (
+    <Card
+      size="small"
+      title={
+        <Space>
+          <Text strong>语义相关度配置</Text>
+          <Tooltip title="调整语义相关度计算的参数，这些参数将影响对话内容的语义匹配程度">
+            <InfoCircleOutlined style={{ color: theme.colorPrimary }} />
+          </Tooltip>
+        </Space>
+      }
+      style={{ marginBottom: 16 }}
+    >
+      <Space direction="vertical" style={{ width: '100%' }}>
+        <div>
+          <Text>相似度权重: {(config.similarityWeight * 100).toFixed(0)}%</Text>
+          <Tooltip title="相似度权重决定了文本内容的语义相似度在计算中的比重">
+            <Slider
+              value={config.similarityWeight}
+              min={0}
+              max={1}
+              step={0.01}
+              onChange={(value) => {
+                updateConfig({
+                  similarityWeight: value,
+                  timeFactorWeight: 1 - value,
+                });
+              }}
+            />
+          </Tooltip>
+        </div>
+        <div>
+          <Text>时间因子权重: {(config.timeFactorWeight * 100).toFixed(0)}%</Text>
+          <Tooltip title="时间因子权重影响语义相关度随时间衰减的程度">
+            <Slider
+              value={config.timeFactorWeight}
+              min={0}
+              max={1}
+              step={0.01}
+              onChange={(value) => {
+                updateConfig({
+                  similarityWeight: 1 - value,
+                  timeFactorWeight: value,
+                });
+              }}
+            />
+          </Tooltip>
+        </div>
+      </Space>
+    </Card>
+  );
 
   if (loading) {
     return (
@@ -83,7 +233,7 @@ const ChatHeatmap: React.FC<ChatHeatmapProps> = ({ history, loading }) => {
       title={
         <Space>
           <Title level={4} style={{ margin: 0 }}>对话历史热图</Title>
-          <Tooltip title="热图显示每条对话的重要性权重，颜色越深表示对当前上下文越重要">
+          <Tooltip title="热图显示每条对话的重要性权重，可通过调节权重参数自定义计算方式">
             <InfoCircleOutlined style={{ color: theme.colorPrimary }} />
           </Tooltip>
         </Space>
@@ -96,6 +246,9 @@ const ChatHeatmap: React.FC<ChatHeatmapProps> = ({ history, loading }) => {
         overflow: 'hidden',
       }}
     >
+      <WeightAdjuster />
+      <SemanticAdjuster />
+      
       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
         {history.map((record, index) => (
           <Card 

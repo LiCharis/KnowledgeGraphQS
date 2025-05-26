@@ -4,29 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="12f94990-0e9f-47df-ac81-91547b7ffb80" name="Changes" comment="1.增加前端选择回答模型功能&#10;2.保存消息增添来源模型信息&#10;3.优化交互逻辑">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/trace" beforeDir="false" afterPath="$PROJECT_DIR$/.next/trace" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/api/chat/add/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/api/chat/add/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/api/chat/clearHistory/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/api/chat/clearHistory/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/api/chat/delete/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/api/chat/delete/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/api/chat/getHistoryList/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/api/chat/getHistoryList/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/api/chat/getOne/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/api/chat/getOne/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/api/chat/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/api/chat/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/api/chat/update/route.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/api/chat/update/route.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(backend)/share/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(backend)/share/[id]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/auth/login/route.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/auth/register/route.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/api/auth/sendCaptcha/route.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/auth/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/auth/login/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/chat/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/chat/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/profile/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/profile/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Chat.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Chat.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Control.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Control.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="12f94990-0e9f-47df-ac81-91547b7ffb80" name="Changes" comment="1.优化聊天页面结构&#10;2.调整请求路由代码，只保留login/register 的服务端cookiies逻辑&#10;3.增添热图功能" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -111,6 +89,7 @@
       <workItem from="1742561439783" duration="30000" />
       <workItem from="1742892244080" duration="18000" />
       <workItem from="1742892280802" duration="15645000" />
+      <workItem from="1742948455342" duration="3285000" />
     </task>
     <task id="LOCAL-00001" summary="修复响应的set-cookies字段没有将cookies设置到本地的问题；&#10;发送cookies手动将cookie添加到header的Cookies字段进行发送">
       <option name="closed" value="true" />
@@ -136,7 +115,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741858403131</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="1.优化聊天页面结构&#10;2.调整请求路由代码，只保留login/register 的服务端cookiies逻辑&#10;3.增添热图功能">
+      <option name="closed" value="true" />
+      <created>1742948702823</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1742948702823</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -157,6 +144,7 @@
     <MESSAGE value="修复响应的set-cookies字段没有将cookies设置到本地的问题；&#10;发送cookies手动将cookie添加到header的Cookies字段进行发送" />
     <MESSAGE value="完善交互逻辑" />
     <MESSAGE value="1.增加前端选择回答模型功能&#10;2.保存消息增添来源模型信息&#10;3.优化交互逻辑" />
-    <option name="LAST_COMMIT_MESSAGE" value="1.增加前端选择回答模型功能&#10;2.保存消息增添来源模型信息&#10;3.优化交互逻辑" />
+    <MESSAGE value="1.优化聊天页面结构&#10;2.调整请求路由代码，只保留login/register 的服务端cookiies逻辑&#10;3.增添热图功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="1.优化聊天页面结构&#10;2.调整请求路由代码，只保留login/register 的服务端cookiies逻辑&#10;3.增添热图功能" />
   </component>
 </project>
